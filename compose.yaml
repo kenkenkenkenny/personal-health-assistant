@@ -1,0 +1,13 @@
+services:
+  health-assistant:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      GOOGLE_TOKEN_PATH: /run/health-secrets/token.json
+      DATABASE_URL: sqlite:////app/data/health.db
+    volumes:
+      - ./data:/app/data
+      - ./secrets:/run/health-secrets
+

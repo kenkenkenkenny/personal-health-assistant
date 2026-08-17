@@ -1,0 +1,42 @@
+services:
+  - type: worker
+    name: personal-health-assistant
+    runtime: docker
+    plan: starter
+    region: frankfurt
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    dockerCommand: python -m health_assistant.main scheduler
+    autoDeployTrigger: commit
+    numInstances: 1
+    disk:
+      name: health-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: DATABASE_URL
+        value: sqlite:////var/data/health.db
+      - key: GOOGLE_TOKEN_PATH
+        value: /var/data/token.json
+      - key: GOOGLE_TOKEN_SEED_PATH
+        value: /etc/secrets/token.json
+      - key: TIMEZONE
+        value: Europe/London
+      - key: REPORT_TIME
+        value: 08:00
+      - key: GOOGLE_REDIRECT_URI
+        value: http://localhost:8080/oauth/callback
+      - key: AIHUBMIX_BASE_URL
+        value: https://aihubmix.com/v1
+      - key: AIHUBMIX_MODEL
+        value: gpt-5
+      - key: NOTIFICATION_CHANNEL
+        value: discord
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: AIHUBMIX_API_KEY
+        sync: false
+      - key: DISCORD_WEBHOOK_URL
+        sync: false
